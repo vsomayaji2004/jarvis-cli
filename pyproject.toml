@@ -1,0 +1,34 @@
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "jarvis-cli"
+version = "0.1.0"
+description = "Jarvis -- a developer assistant with voice. Powered by Claude."
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.10"
+authors = [{name = "Vid", email = "vidhatasomayaji@gmail.com"}]
+keywords = ["ai", "voice", "assistant", "claude", "tts", "speech"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+dependencies = [
+    "SpeechRecognition>=3.10",
+    "PyAudio>=0.2.14",
+    "fish-audio-sdk>=0.1",
+    "rich>=13.0",
+    "click>=8.0",
+    "pyyaml>=6.0",
+]
+
+[project.scripts]
+jarvis = "jarvis.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/vsomayaji2004/jarvis-cli"
+Repository = "https://github.com/vsomayaji2004/jarvis-cli"

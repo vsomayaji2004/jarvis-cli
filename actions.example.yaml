@@ -1,0 +1,24 @@
+# Custom Jarvis actions -- copy to ~/.jarvis/actions.yaml
+#
+# Each action needs:
+#   command: shell command to run
+#   cwd: working directory (optional, supports ~)
+#   description: what to show in the terminal (optional)
+#
+# Claude triggers these via ACTION blocks in responses.
+# Built-in actions (open_browser, open_terminal) are always available.
+
+run_frontend:
+  command: npm run dev
+  cwd: ~/projects/my-app
+  description: Frontend dev server starting
+
+run_backend:
+  command: source .env && python -m uvicorn main:app --reload
+  cwd: ~/projects/my-api
+  description: Backend starting with env loaded
+
+deploy:
+  command: git push origin main
+  cwd: ~/projects/my-app
+  description: Deploying to production
