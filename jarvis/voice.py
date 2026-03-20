@@ -104,9 +104,9 @@ class VoiceEngine:
         import speech_recognition as sr
 
         self._recognizer = sr.Recognizer()
-        self._recognizer.pause_threshold = 0.6  # 0.6s silence = phrase done
-        self._recognizer.phrase_threshold = 0.15
-        self._recognizer.non_speaking_duration = 0.3
+        self._recognizer.pause_threshold = 2.0  # 2s silence = phrase done
+        self._recognizer.phrase_threshold = 0.2
+        self._recognizer.non_speaking_duration = 1.0
         self._recognizer.dynamic_energy_threshold = True
         self._recognizer.energy_threshold = 300
         return self._recognizer

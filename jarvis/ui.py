@@ -97,24 +97,26 @@ class UI:
         self.console.print()
 
     def show_jarvis_streaming(self, text: str, duration: float = 3.0) -> None:
-        """Reveal Jarvis's response word by word, timed to audio duration."""
+        """Reveal Jarvis's response word by word, synced to audio playback."""
+        import sys
         import time
 
         words = text.split()
         if not words:
             return
 
-        ms_per_word = max(0.06, duration / len(words))
-        revealed = "  jarvis: "
+        delay_per_word = max(0.05, duration / len(words))
 
-        for i, word in enumerate(words):
-            revealed += word + " "
-            # Clear line and reprint
-            self.console.print(f"\r{revealed}", end="", highlight=False, style="magenta" if i == 0 else None)
-            time.sleep(ms_per_word)
+        sys.stdout.write("  \033[1;36mjarvis:\033[0m ")
+        sys.stdout.flush()
 
-        self.console.print()  # Final newline
-        self.console.print()  # Breathing room
+        for word in words:
+            sys.stdout.write(word + " ")
+            sys.stdout.flush()
+            time.sleep(delay_per_word)
+
+        sys.stdout.write("\n\n")
+        sys.stdout.flush()
 
     def show_error(self, message: str) -> None:
         """Display an error message."""
@@ -162,5 +164,6 @@ class UI:
 
     def clear_status(self) -> None:
         """Move cursor up to overwrite the last status line."""
-        # Move up one line and clear it
-        self.console.print("\033[A\033[2K", end="")
+        import sys
+        sys.stdout.write("\033[A\033[2K\r")
+        sys.stdout.flush()

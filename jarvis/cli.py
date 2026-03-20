@@ -286,55 +286,38 @@ def _conversation_loop(
         # --- 3. Parse action block (if any) ---
         clean_response, action = parse_action(response)
 
-        # --- 4. Display response ---
-        # Show full Opus response if it was summarized
-        full = getattr(brain, '_full_response', response)
-        # Strip action block from full response too for display
-        full_clean, _ = parse_action(full)
-        if full_clean != clean_response and len(full_clean) > len(clean_response):
-            from rich.text import Text as RichText
-            from rich.panel import Panel
-            ui.console.print(Panel(
-                RichText(full_clean, style="dim"),
-                title="[dim]Claude (Opus)[/]",
-                border_style="dim",
-                padding=(0, 1),
-            ))
-
-        if clean_response:
-            ui.show_jarvis(clean_response)
-
-        # --- 5. Execute action ---
+        # --- 4. Display + speak response ---
         if action:
             result = execute_action(action)
-            ui.show_info(f"[action] {result}")
+            ui.show_info(f" {result}")
 
-        # --- 6. Speech control: only speak SAY field ---
         speak_text = None
         if action and action.speak and action.say:
             speak_text = action.say_truncated
         elif not action and clean_response:
-            # No action block — speak the (possibly summarized) response
             speak_text = clean_response
 
+        display_text = clean_response or speak_text or ""
+
         if speak_text and voice.tts_available and not text_mode:
-            ui.show_status(Status.SPEAKING)
             try:
                 import threading
 
                 audio_path = voice.generate_audio(speak_text)
                 if audio_path:
+                    duration = voice.get_audio_duration(audio_path)
+                    # Start audio and text reveal at the same time
                     player = threading.Thread(target=voice.play_audio, args=(audio_path,), daemon=True)
                     player.start()
-                    ui.clear_status()
+                    ui.show_jarvis_streaming(display_text, duration)
                     player.join()
                 else:
-                    ui.clear_status()
+                    ui.show_jarvis(display_text)
             except TTSError as e:
-                ui.clear_status()
+                ui.show_jarvis(display_text)
                 ui.show_info(f"Voice output failed: {e}")
-
-        ui.clear_status()
+        elif display_text:
+            ui.show_jarvis(display_text)
 
 
 if __name__ == "__main__":
